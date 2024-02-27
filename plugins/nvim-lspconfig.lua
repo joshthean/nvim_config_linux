@@ -1,9 +1,10 @@
 local on_attach = require("util.lsp").on_attach
 
 local config = function()
-    -- require("neoconf").setup({})
-
+	require("neoconf").setup({})
+	local cmp_nvim_lsp = require("cmp_nvim_lsp")
 	local lspconfig = require("lspconfig")
+	local capabilities = cmp_nvim_lsp.default_capabilities()
 
 	local signs = { Error = " ", Warn = " ", Hint = " ", Info = " " }
 
@@ -13,7 +14,7 @@ local config = function()
 	end
 
 	lspconfig.lua_ls.setup({
-		-- capabilities = capabilities,
+		capabilities = capabilities,
 		on_attach = on_attach,
 		settings = { -- custom settings for lua
 			Lua = {
@@ -33,7 +34,7 @@ local config = function()
 	})
 	-- python
 	lspconfig.pyright.setup({
-		-- capabilities = capabilities,
+		capabilities = capabilities,
 		on_attach = on_attach,
 		settings = {
 			pyright = {
@@ -74,22 +75,21 @@ local config = function()
 			},
 		},
 	})
-
-	--Format on Save
-	local lsp_fmt_group = vim.api.nvim_create_augroup("LspFormattingGroup", {})
-	vim.api.nvim_create_autocmd("BufWritePost", {
-		group = lsp_fmt_group,
-		callback = function()
-			local efm = vim.lsp.get_clients({ name = "efm" })
-
-			if vim.tbl_isempty(efm) then
-				return
-			end
-
-			vim.lsp.buf.format({ name = "efm" })
-		end,
-	})
 end
+
+-- Format on Save
+-- local lsp_fmt_group = vim.api.nvim_create_augroup("LspFormattingGroup", {})
+-- vim.api.nvim_create_autocmd("BufWritePost", {
+-- 	group = lsp_fmt_group,
+-- 	callback = function()
+-- 		local efm = vim.lsp.get_clients({ name = "efm" })
+-- 		if vim.tbl_isempty(efm) then
+-- 			return
+-- 		end
+-- 
+-- 		vim.lsp.buf.format({ name = "efm", async = true })
+-- 	end,
+-- })
 
 return {
 	"neovim/nvim-lspconfig",
@@ -99,5 +99,8 @@ return {
 		"windwp/nvim-autopairs",
 		"williamboman/mason.nvim",
 		"creativenull/efmls-configs-nvim",
+		"hrsh7th/nvim-cmp",
+		"hrsh7th/cmp-buffer",
+		"hrsh7th/cmp-nvim-lsp",
 	},
 }
